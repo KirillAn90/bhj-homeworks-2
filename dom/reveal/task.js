@@ -1,27 +1,27 @@
-// Получаем элемент, который нужно анимировать
-const revealElement = document.querySelector('.reveal');
-// Получаем начальную позицию элемента относительно верха страницы
-const revealOffset = revealElement.offsetTop;
-// Флаг для проверки, был ли уже показан элемент
-let isRevealed = false;
-
-// Функция для проверки видимости элемента
-function checkReveal() {
-    // Получаем текущую позицию прокрутки
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+function initScrollReveal() {
+    // Получаем элемент, который нужно анимировать
+    const revealElement = document.querySelector('.reveal');
     
-    // Проверяем, находится ли элемент в видимой области
-    if (scrollTop >= revealOffset - window.innerHeight && !isRevealed) {
-        // Добавляем класс при достижении элемента
-        revealElement.classList.add('reveal_active');
-        isRevealed = true;
-    }
+    // Создаем новый наблюдатель пересечений
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            // Если элемент вошел в видимую область
+            if (entry.isIntersecting) {
+                // Добавляем класс для отображения
+                entry.target.classList.add('visible');
+                // Прекращаем наблюдение за элементом
+                observer.unobserve(entry.target);
+            }
+        });
+    }, {
+        // Настраиваем параметры наблюдения
+        rootMargin: '0px',
+        threshold: 0.5 // Элемент появится когда 50% будет в видимой области
+    });
+
+    // Начинаем наблюдение за элементом
+    observer.observe(revealElement);
 }
 
-// Добавляем обработчик события прокрутки
-window.addEventListener('scroll', () => {
-    requestAnimationFrame(checkReveal);
-});
-
-// Проверяем при загрузке страницы
-window.addEventListener('load', checkReveal);
+// Запускаем инициализацию после загрузки DOM
+document.addEventListener('DOMContentLoaded', initScrollReveal);
