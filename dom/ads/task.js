@@ -39,6 +39,9 @@ function initRotator(rotatorElement) {
         );
     }
     
+    // Переменная timer теперь локальная для каждого ротатора
+    let timer = null;
+    
     // Запускаем ротатор при появлении в области видимости
     function checkVisibility() {
         if (isElementInView(rotatorElement)) {
@@ -54,7 +57,9 @@ function initRotator(rotatorElement) {
     }
     
     // Добавляем обработчик события прокрутки
-    window.addEventListener('scroll', checkVisibility);
+    window.addEventListener('scroll', () => {
+        checkVisibility();
+    });
     
     // Инициализируем проверку при загрузке страницы
     checkVisibility();
